@@ -3,7 +3,7 @@ CXX = g++
 # Flags related to the google-test
 GTESTFLAGS = -isystem $(GTEST_DIR)/include -pthread
 
-CXXFLAGS = -Wall -Wextra 
+CXXFLAGS = -Wall 
 CXXFLAGS += -Iinclude $(GTESTFLAGS) 
 
 LDFLAGS = -L$(GTEST_DIR)/lib -lgtest -pthread
@@ -14,7 +14,7 @@ BINARY = bin/fibonacci
 
 # Suffix rule to handle source-code files and compile them
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) -DUNITTEST $(CXXFLAGS) -c $< -o $@
 
 .PHONY: all
 all: build
@@ -24,7 +24,7 @@ build: $(BINARY)
 
 # Rule to handly object files and link them
 $(BINARY): $(OBJECTS)
-	$(CXX) $^ $(LDFLAGS) -o $@
+	$(CXX)  $^ $(LDFLAGS) -o $@
 
 .PHONY: clean
 clean:

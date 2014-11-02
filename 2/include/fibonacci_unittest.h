@@ -1,7 +1,6 @@
 #ifndef FIBONACCI_UNITTEST_H
 #define FIBONACCI_UNITTEST_H
 
-#include "fibonacci.h"
 #include <gtest/gtest.h>
 
 /// Test the functionality of the 1st Fibonacci Number Algorithm
