@@ -12,4 +12,10 @@ int getnFibonacciNumber (int n);
 /// n.
 int getnFibonacciNumber2 (int n);
 
+/// Function to calculate the n-th Fibonacci
+///
+/// This implementation uses constant and runs in lineare time 
+/// n.
+int getnFibonacciNumber3 (int n);
+
 #endif

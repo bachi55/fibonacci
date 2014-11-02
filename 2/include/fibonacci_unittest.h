@@ -32,4 +32,18 @@ TEST (functionality_2, correctness) {
   
 }
 
+/// Test the functionality of the 3rd Fibonacci Number Algorithm
+///
+/// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
+TEST (functionality_3, correctness) {
+ 
+  ASSERT_EQ (getnFibonacciNumber3 (0), 0);
+  ASSERT_EQ (getnFibonacciNumber3 (1), 1); 
+  ASSERT_EQ (getnFibonacciNumber3 (2), 1); 
+  ASSERT_EQ (getnFibonacciNumber3 (3), 2);
+  ASSERT_EQ (getnFibonacciNumber3 (4), 3);
+  ASSERT_EQ (getnFibonacciNumber3 (5), 5);
+  
+}
+
 #endif
