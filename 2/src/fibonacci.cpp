@@ -9,22 +9,21 @@
 #include <vector>
 
 #include <gtest/gtest.h>
-
 /// Function containing the functionality RUN_ALL_TESTS
 ///
 /// This function has to have a void return value, to run the tests!
 /// Using this function (or the way of invoking the test) does not 
 /// require 'testing::InitGoogleTest'.
-// void unittest () {
-// 
-//   ASSERT_EQ (getnFibonacciNumber (0), 0);
-//   ASSERT_EQ (getnFibonacciNumber (1), 1); 
-//   ASSERT_EQ (getnFibonacciNumber (2), 1); 
-//   ASSERT_EQ (getnFibonacciNumber (3), 2);
-//   ASSERT_EQ (getnFibonacciNumber (4), 3);
-//   ASSERT_EQ (getnFibonacciNumber (5), 5);
-//   
-// }
+void unittest () {
+
+  ASSERT_EQ (getnFibonacciNumber (0), 0);
+  ASSERT_EQ (getnFibonacciNumber (1), 1); 
+  ASSERT_EQ (getnFibonacciNumber (2), 1); 
+  ASSERT_EQ (getnFibonacciNumber (3), 2);
+  ASSERT_EQ (getnFibonacciNumber (4), 3);
+  ASSERT_EQ (getnFibonacciNumber (5), 5);
+  
+}
 
 int main (int argc, char* argv[]) {
   

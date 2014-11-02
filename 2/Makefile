@@ -4,9 +4,9 @@ CXX = g++
 GTESTFLAGS = -isystem $(GTEST_DIR)/include -pthread
 
 CXXFLAGS = -Wall -Wextra 
-CXXFLAGS += $(GTESTFLAGS) -Iinclude 
+CXXFLAGS += -Iinclude $(GTESTFLAGS) 
 
-LDFLAGS = -L$(GTEST_DIR)/lib -lgtest
+LDFLAGS = -L$(GTEST_DIR)/lib -lgtest -pthread
 
 SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(patsubst %.cpp, %.o, $(SOURCES))
@@ -24,7 +24,7 @@ build: $(BINARY)
 
 # Rule to handly object files and link them
 $(BINARY): $(OBJECTS)
-	@echo $(CXX) $(LDFLAGS) $^ -o $@
+	$(CXX) $^ $(LDFLAGS) -o $@
 
 .PHONY: clean
 clean:
