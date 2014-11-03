@@ -29,6 +29,11 @@ TEST (functionality_2, correctness) {
   ASSERT_EQ (getnFibonacciNumber2 (4), 3);
   ASSERT_EQ (getnFibonacciNumber2 (5), 5);
   
+  ASSERT_EQ (getnFibonacciNumber2 (12), getnFibonacciNumber (12));
+  ASSERT_EQ (getnFibonacciNumber2 (20), getnFibonacciNumber (20));
+  ASSERT_EQ (getnFibonacciNumber2 (22), getnFibonacciNumber (22));
+  ASSERT_EQ (getnFibonacciNumber2 (23), getnFibonacciNumber (23));
+  
 }
 
 /// Test the functionality of the 3rd Fibonacci Number Algorithm
@@ -42,6 +47,11 @@ TEST (functionality_3, correctness) {
   ASSERT_EQ (getnFibonacciNumber3 (3), 2);
   ASSERT_EQ (getnFibonacciNumber3 (4), 3);
   ASSERT_EQ (getnFibonacciNumber3 (5), 5);
+  
+  ASSERT_EQ (getnFibonacciNumber3 (12), getnFibonacciNumber (12));
+  ASSERT_EQ (getnFibonacciNumber3 (20), getnFibonacciNumber (20));
+  ASSERT_EQ (getnFibonacciNumber3 (22), getnFibonacciNumber (22));
+  ASSERT_EQ (getnFibonacciNumber3 (23), getnFibonacciNumber (23));
   
 }
 
