@@ -1,4 +1,6 @@
 #TODO: Are optimization and debug flags also needed in the linking step? 
+#HINT: Make already has a rule to build objects from cpp.
+#TODO: Run executable for target tests automatically.
 
 CXX = g++
 
