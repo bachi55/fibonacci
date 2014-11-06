@@ -47,7 +47,8 @@ tests : LDFLAGS  += $(LDGTESTFLAGS)
 tests : $(BINARY_TEST)
 	@exec $(BINARY_TEST)
 
-# Rule to handly object files and link them
+# | reffers to a 'order-only' prerequisite. It requiers make 3.80!
+# Source: http://www.cmcrossroads.com/article/making-directories-gnu-make?page=0%2C1
 $(BINARY_BUILD) : $(OBJECTS) $(OBJECTS_BUILD) | $(OUT)/
 	$(LD) $^ $(LDFLAGS) -o $@
 
