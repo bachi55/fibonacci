@@ -1,11 +1,10 @@
-#ifndef FIBONACCI_UNITTEST_H
-#define FIBONACCI_UNITTEST_H
+#include "fibonacci-algorithms.h"
 
 #include <gtest/gtest.h>
 
-/// Test the functionality of the 1st Fibonacci Number Algorithm
-///
-/// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
+// Test the functionality of the 1st Fibonacci Number Algorithm
+//
+// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
 TEST (functionality_1, correctness) {
  
   ASSERT_EQ (getnFibonacciNumber (0), 0);
@@ -17,9 +16,9 @@ TEST (functionality_1, correctness) {
   
 }
 
-/// Test the functionality of the 2nd Fibonacci Number Algorithm
-///
-/// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
+// Test the functionality of the 2nd Fibonacci Number Algorithm
+//
+// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
 TEST (functionality_2, correctness) {
  
   ASSERT_EQ (getnFibonacciNumber2 (0), 0);
@@ -36,9 +35,9 @@ TEST (functionality_2, correctness) {
   
 }
 
-/// Test the functionality of the 3rd Fibonacci Number Algorithm
-///
-/// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
+// Test the functionality of the 3rd Fibonacci Number Algorithm
+//
+// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
 TEST (functionality_3, correctness) {
  
   ASSERT_EQ (getnFibonacciNumber3 (0), 0);
@@ -55,4 +54,9 @@ TEST (functionality_3, correctness) {
   
 }
 
-#endif
+int main (int argc, char* argv[]) {
+  
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+
+}

@@ -1,56 +1,62 @@
-#TODO: Are optimization and debug flags also needed in the linking step? 
-#HINT: Make already has a rule to build objects from cpp.
-#TODO: Run executable for target tests automatically.
+# Different between '=' and ':='
+# 'var  =' ... evaluated recursively every time 'var' is called
+# 'var :=' ... evaluated just ones when 'var' is defined
 
-CXX = g++
+CXX 		:= g++
+LD 		:= g++
+MKDIR 		:= mkdir
+RM		:= rm -rf
+CXXFLAGS 	 = -Wall
 
-CXXFLAGS = -Wall -Iinclude
-
-OPTIFLAGS = -O3
-DEBUGFLAGS = -g
-
-ifeq ($(BUILD),debug)
+OPTIFLAGS 	:= -O3
+DEBUGFLAGS 	:= -g
+ifeq ($(BUILD), debug)
 	CXXFLAGS += $(DEBUGFLAGS)
 else
 	CXXFLAGS += $(OPTIFLAGS)
 endif
 
+CXXFLAGS += -Iinclude
+
 # Flags related to the google-test
-CXXGTESTFLAGS = -DUNITTEST -isystem $(GTEST_DIR)/include -pthread
-LDGTESTFLAGS = -L$(GTEST_DIR)/lib -lgtest -pthread
+CXXGTESTFLAGS 	:= -isystem $(GTEST_DIR)/include -pthread
+LDGTESTFLAGS 	:= -L$(GTEST_DIR)/lib -lgtest -pthread
 
-SOURCES = $(wildcard src/*.cpp)
+SOURCES 	:= $(wildcard src/*.cpp)
+OBJECTS 	:= $(patsubst %.cpp, %.o, $(SOURCES))
 
-OBJECTS = $(patsubst %.cpp, %.o, $(SOURCES))
-OBJECTS_TEST = $(patsubst %.cpp, %_test.o, $(SOURCES))
+SOURCES_BUILD 	:= $(wildcard src/build/*.cpp)
+OBJECTS_BUILD 	:= $(patsubst %.cpp, %.o, $(SOURCES_BUILD))
 
-BINARY = bin/fibonacci
-BINARY_TEST = bin/fibonacci_test
+SOURCES_TEST 	:= $(wildcard src/unittest/*.cpp)
+OBJECTS_TEST 	:= $(patsubst %.cpp, %.o, $(SOURCES_TEST))
 
-# Suffix rule to handle source-code files and compile them
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-%_test.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(CXXGTESTFLAGS) -c $< -o $@
-
+OUT 		:= bin
+BINARY_BUILD 	:= $(OUT)/fibonacci
+BINARY_TEST 	:= $(OUT)/unittest
 
 .PHONY: all
-all: build
+all : build
 
 .PHONY: build
-build: $(BINARY)
+build : $(BINARY_BUILD)
 
 .PHONY: tests
-tests: $(BINARY_TEST)
+tests : CXXFLAGS += $(CXXGTESTFLAGS)
+tests : LDFLAGS  += $(LDGTESTFLAGS)
+tests : $(BINARY_TEST)
+	@exec $(BINARY_TEST)
 
 # Rule to handly object files and link them
-$(BINARY): $(OBJECTS)
-	$(CXX) $^ $(LDFLAGS) -o $@
+$(BINARY_BUILD) : $(OBJECTS) $(OBJECTS_BUILD) | $(OUT)/
+	$(LD) $^ $(LDFLAGS) -o $@
 
-$(BINARY_TEST): $(OBJECTS_TEST)
-	$(CXX) $^ $(LDFLAGS) $(LDGTESTFLAGS) -o $@
+$(BINARY_TEST) : $(OBJECTS) $(OBJECTS_TEST) | $(OUT)/
+	$(LD) $^ $(LDFLAGS) -o $@
 
+$(OUT)/ :
+	$(MKDIR) $@
+	
 .PHONY: clean
-clean:
-	$(RM) $(OBJECTS) $(OBJECTS_TEST) $(BINARY) $(BINARY_TEST)
+clean :
+	$(RM) $(OUT) $(OBJECTS) $(OBJECTS_TEST) $(OBJECTS_TEST)
