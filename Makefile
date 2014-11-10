@@ -2,11 +2,14 @@
 # 'var  =' ... evaluated recursively every time 'var' is called
 # 'var :=' ... evaluated just ones when 'var' is defined
 
+#TODO: How to handly different files in build?
+#TODO: Make output depend on the templates.
+
 CXX 		:= g++
 LD 		:= g++
 MKDIR 		:= mkdir
 RM		:= rm -rf
-CXXFLAGS 	 = -Wall
+CXXFLAGS 	 = -std=c++11 -Wall
 
 OPTIFLAGS 	:= -O3
 DEBUGFLAGS 	:= -g
@@ -60,4 +63,4 @@ $(OUT)/ :
 	
 .PHONY: clean
 clean :
-	$(RM) $(OUT) $(OBJECTS) $(OBJECTS_TEST) $(OBJECTS_TEST)
+	$(RM) $(OUT) $(OBJECTS) $(OBJECTS_BUILD) $(OBJECTS_TEST)

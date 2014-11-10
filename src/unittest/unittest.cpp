@@ -54,6 +54,90 @@ TEST (functionality_3, correctness) {
   
 }
 
+// Test the functionality of the 4rd Fibonacci Number Algorithm
+//
+// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
+TEST (functionality_4, correctness) {
+ 
+  ASSERT_EQ (getnFibonacciNumber4 (0), 0);
+  ASSERT_EQ (getnFibonacciNumber4 (1), 1); 
+  ASSERT_EQ (getnFibonacciNumber4 (2), 1); 
+  ASSERT_EQ (getnFibonacciNumber4 (3), 2);
+  ASSERT_EQ (getnFibonacciNumber4 (4), 3);
+  ASSERT_EQ (getnFibonacciNumber4 (5), 5);
+  
+  ASSERT_EQ (getnFibonacciNumber4 (12), getnFibonacciNumber3 (12));
+  ASSERT_EQ (getnFibonacciNumber4 (20), getnFibonacciNumber3 (20));
+  ASSERT_EQ (getnFibonacciNumber4 (22), getnFibonacciNumber3 (22));
+  ASSERT_EQ (getnFibonacciNumber4 (23), getnFibonacciNumber3 (23));
+  
+}
+
+// Test the functionality of the matrix class implementation
+//
+// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
+TEST (matrix, correctness) {
+  
+  Matrix <ulong> m1 (2, 2, {1, 2, 3, 4});
+  ASSERT_EQ (m1 (0, 0), 1);
+  ASSERT_EQ (m1 (0, 1), 2);
+  ASSERT_EQ (m1 (1, 0), 3);
+  ASSERT_EQ (m1 (1, 1), 4);
+  
+  Matrix <ulong> m2 (2, 2, {1, 0, 0, 1});
+  Matrix <ulong> prod = m1 * m2;
+  ASSERT_EQ (prod (0, 0), 1);
+  ASSERT_EQ (prod (0, 1), 2);
+  ASSERT_EQ (prod (1, 0), 3);
+  ASSERT_EQ (prod (1, 1), 4);
+  
+  // calculate the covariance matrix
+  Matrix <ulong> m1t = Matrix <ulong> (2, 2, {1, 3, 2, 4});
+  Matrix <ulong> cov = m1 * m1t;
+  ASSERT_EQ (cov (0, 0),  5);
+  ASSERT_EQ (cov (0, 1), 11);
+  ASSERT_EQ (cov (1, 0), 11);
+  ASSERT_EQ (cov (1, 1), 25);
+
+}
+
+// Test the functionality of the 4rd Fibonacci Number Algorithm
+//
+// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
+TEST (functionality_5, correctness) {
+ 
+  ASSERT_EQ (getnFibonacciNumber5 (0), 0);
+  ASSERT_EQ (getnFibonacciNumber5 (1), 1); 
+  ASSERT_EQ (getnFibonacciNumber5 (2), 1); 
+  ASSERT_EQ (getnFibonacciNumber5 (3), 2);
+  ASSERT_EQ (getnFibonacciNumber5 (4), 3);
+  ASSERT_EQ (getnFibonacciNumber5 (5), 5);
+  
+  ASSERT_EQ (getnFibonacciNumber5 (12), getnFibonacciNumber3 (12));
+  ASSERT_EQ (getnFibonacciNumber5 (20), getnFibonacciNumber3 (20));
+  ASSERT_EQ (getnFibonacciNumber5 (22), getnFibonacciNumber3 (22));
+  ASSERT_EQ (getnFibonacciNumber5 (23), getnFibonacciNumber3 (23));
+  
+}
+// Test the functionality of the 4rd Fibonacci Number Algorithm
+//
+// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
+TEST (functionality_6, correctness) {
+ 
+  ASSERT_EQ (getnFibonacciNumberLUT (0), 0);
+  ASSERT_EQ (getnFibonacciNumberLUT (1), 1); 
+  ASSERT_EQ (getnFibonacciNumberLUT (2), 1); 
+  ASSERT_EQ (getnFibonacciNumberLUT (3), 2);
+  ASSERT_EQ (getnFibonacciNumberLUT (4), 3);
+  ASSERT_EQ (getnFibonacciNumberLUT (5), 5);
+  
+  ASSERT_EQ (getnFibonacciNumberLUT (12), getnFibonacciNumber3 (12));
+  ASSERT_EQ (getnFibonacciNumberLUT (20), getnFibonacciNumber3 (20));
+  ASSERT_EQ (getnFibonacciNumberLUT (22), getnFibonacciNumber3 (22));
+  ASSERT_EQ (getnFibonacciNumberLUT (23), getnFibonacciNumber3 (23));
+  
+}
+
 int main (int argc, char* argv[]) {
   
   testing::InitGoogleTest(&argc, argv);
