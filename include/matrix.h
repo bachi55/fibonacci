@@ -34,10 +34,10 @@ public:
   // print matrix
   void printMatrix ();
   
-  // access operator
+  // access operator (e.g. matrix (i,j) = 0 --> lvalue) 
   T & operator() (const uint row, const uint col); 
   
-  // access operator
+  // access operator (for access from constant objects)
   const T & operator() (const uint row, const uint col) const; 
   
   // matrix multiplication

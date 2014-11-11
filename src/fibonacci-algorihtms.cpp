@@ -1,5 +1,25 @@
 #include "fibonacci-algorithms.h"
 
+FibonacciLUT:: FibonacciLUT (uint nMax) 
+  : _nMax (nMax)
+{
+  _LUT.resize (_nMax);
+  
+  for (auto it = _LUT.begin(); it != _LUT.end(); ++it) 
+    (*it) = getnFibonacciNumber5 (it - _LUT.begin());
+}
+
+ulong FibonacciLUT:: lookfor (uint n) const {
+  if (n > _nMax) {
+    char buffer[128]; 
+    std::sprintf (buffer, "Error: No Fibonacci-LUT entry for %i (nMax = %i)\n", n, _nMax);
+    
+    throw std::runtime_error (std::string (buffer));
+  }
+    
+  return _LUT[n];
+}
+
 // Implementation; see header-file for description
 //
 // TODO: Check for overflow.
@@ -73,25 +93,6 @@ double exponentiationBySquaring (double x, uint n) {
   else 			return (x * exponentiationBySquaring (x * x, (n - 1) / 2));
 }
 
-// Implementation; see header-file for description
-// TODO: Is there really something happaning while compile time?
-// constexpr ulong getnFibonacciNumber6 (uint n) {
-//   
-//   return n >= 2 ? getnFibonacciNumber3 (n) : n;
-//   
-// }
-
-
-// TODO: fixed size if LUT (94 elements) because of overflow
-// ulong getnFibonacciNumberLUT (uint n) {
-//   
-//   std::vector <ulong> fib_values (94);
-//   for (std::vector <ulong>::iterator it = fib_values.begin (); it != fib_values.end(); ++it) {
-//     constN <getnFibonacciNumber (20)> out1;
-//     (*it) = getnFibonacciNumber (it - fib_values.begin());
-//   }
-//   return fib_values[n];
-//   
-// }
-
-
+ulong getnFibonacciNumber6 (const FibonacciLUT& LUT, uint n) {
+  return LUT.lookfor(n);
+}

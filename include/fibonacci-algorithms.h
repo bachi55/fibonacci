@@ -5,10 +5,24 @@
 #include <cmath>
 #include <cstdio>
 #include <stdexcept>
+#include <string>
 #include <sys/types.h>
 #include <vector>
 
 #include "matrix.h"
+
+class FibonacciLUT {
+  uint _nMax;
+  std::vector <ulong> _LUT;
+  
+  
+public:
+  // constructor
+  FibonacciLUT (uint nMax=93);
+  
+  // get nth Fibonacci number
+  ulong lookfor (uint n) const;
+};
 
 // Function to calculate the n-th Fibonacci 
 //
@@ -47,11 +61,9 @@ ulong getnFibonacciNumber5 (uint n);
 // TODO: check for template!
 double exponentiationBySquaring (double x, uint n);
 
-// Function to calculate the n-th Fibonacci
+// Function to looks up the n-th Fibonacci
 //
-// This implementation creates a look up table at compile time.
-// constexpr ulong getnFibonacciNumber6 (uint n);
-// 
-// ulong getnFibonacciNumberLUT (uint n);
+// The LUT needs to be initialized beforehand.
+ulong getnFibonacciNumber6 (const FibonacciLUT& LUT, uint n);
 
 #endif
