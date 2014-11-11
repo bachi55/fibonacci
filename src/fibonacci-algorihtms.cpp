@@ -4,9 +4,7 @@
 //
 // TODO: Check for overflow.
 ulong getnFibonacciNumber (uint n) {
-  if (n < 2) return n; 
-  
-  return getnFibonacciNumber (n - 1) + getnFibonacciNumber (n - 2);
+  return n >= 2 ? getnFibonacciNumber (n - 1) + getnFibonacciNumber (n - 2) : n;
 }
 
 // Implementation; see header-file for description
@@ -77,22 +75,23 @@ double exponentiationBySquaring (double x, uint n) {
 
 // Implementation; see header-file for description
 // TODO: Is there really something happaning while compile time?
-constexpr ulong getnFibonacciNumber6 (uint n) {
-  
-  return n >= 2 ? getnFibonacciNumber3 (n) : n;
-  
-}
+// constexpr ulong getnFibonacciNumber6 (uint n) {
+//   
+//   return n >= 2 ? getnFibonacciNumber3 (n) : n;
+//   
+// }
+
 
 // TODO: fixed size if LUT (94 elements) because of overflow
-ulong getnFibonacciNumberLUT (uint n) {
-  
-  std::vector <ulong> fib_values (94);
-  for (std::vector <ulong>::iterator it = fib_values.begin (); it != fib_values.end(); ++it) {
-    std::printf ("%lu\n", it - fib_values.begin());
-    (*it) = getnFibonacciNumber6 (it - fib_values.begin());
-  }
-  return fib_values[n];
-  
-}
+// ulong getnFibonacciNumberLUT (uint n) {
+//   
+//   std::vector <ulong> fib_values (94);
+//   for (std::vector <ulong>::iterator it = fib_values.begin (); it != fib_values.end(); ++it) {
+//     constN <getnFibonacciNumber (20)> out1;
+//     (*it) = getnFibonacciNumber (it - fib_values.begin());
+//   }
+//   return fib_values[n];
+//   
+// }
 
 

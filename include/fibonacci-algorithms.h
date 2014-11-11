@@ -50,8 +50,8 @@ double exponentiationBySquaring (double x, uint n);
 // Function to calculate the n-th Fibonacci
 //
 // This implementation creates a look up table at compile time.
-constexpr ulong getnFibonacciNumber6 (uint n);
-
-ulong getnFibonacciNumberLUT (uint n);
+// constexpr ulong getnFibonacciNumber6 (uint n);
+// 
+// ulong getnFibonacciNumberLUT (uint n);
 
 #endif
