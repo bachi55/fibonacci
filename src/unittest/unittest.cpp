@@ -1,6 +1,13 @@
 #include "fibonacci-algorithms.h"
+#include "meter.h"
+
+#include <chrono>
+
+#include <iostream>
+#include <ctime>
 
 #include <gtest/gtest.h>
+
 
 // typedef std::function<ulong(ulong)> FibFunc
 // FibFunc f = getnFibonacciNumber
@@ -162,11 +169,52 @@ TEST (make_a_test, fail) {
 //   ASSERT_EQ (m2 (1, 0), 1.0);
 //   ASSERT_EQ (m2 (1, 1), 0.2);
   
-  // since the algorithm getnFibonacciNumber5 uses doubles but map them (via floor) to ulong
-  // there is an numerical uncertainty, which causes the fibonacci number to be wrong for big
-  // inputs for n!
-  // TODO: try to find the upper border for which getnFibonacciNumber5 works correctly.
-  // ASSERT_EQ (getnFibonacciNumber3(93), getnFibonacciNumber5(93));
+  
+  // We know about the numerical problems (because of floor(double) -> uint) with
+  // algorithm 5. Therefore we should check, when the system explodes. A more general
+  // question behind this is: We are calculating very big numbers for sufficient large
+  // input n. Therefore we can expect, that the result will exceed the range of the 
+  // integral types "quite fast". For floating point types, we are dealing with the 
+  // the intrinsic properties of them, this means: they become more inaccurate for
+  // a large result. 
+  
+//   for (uint n = 1; n < 100; n++) {
+//     ASSERT_EQ (getnFibonacciNumber5 (n), getnFibonacciNumber3 (n));
+//     std::printf ("%u\n", n);
+//   }
+  
+  // n=76 fails !
+}
+
+TEST (meter_test, functionality) {
+  
+  Meter <unsigned int, unsigned int> answerMeter (theAnswer);
+  
+  answerMeter.start();
+  answerMeter.stop();
+  
+  ASSERT_EQ (answerMeter.peak(), 0);
+    
+  Meter <timePoint, timeDuration> meter (myClock);
+  meter.start();
+  meter.stop();
+  
+  ASSERT_LT (std::chrono::duration_cast <microseconds> (meter.peak()).count(), 5);
+  
+  meter.start();
+  sleep (1);
+  meter.stop();
+  
+  ASSERT_LT (std::chrono::duration_cast <microseconds> (meter.peak()).count(), 1000200);
+  
+  sleep (2);
+  meter.stop();
+
+  ASSERT_LT (std::chrono::duration_cast <microseconds> (meter.peak()).count(), 3000400);
+  
+  meter.reset();
+  ASSERT_EQ (std::chrono::duration_cast <microseconds> (meter.peak()).count(), 0);
+  
 }
 
 int main (int argc, char* argv[]) {

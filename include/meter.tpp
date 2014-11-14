@@ -1,28 +1,28 @@
 #include "meter.h" 
 
-template <class T>
-Meter <T>:: Meter (std::function <T (void)> f) 
+template <class Measure, class Unit>
+Meter <Measure, Unit>:: Meter (std::function <Measure (void)> f) 
   : _f (f)
-  , _start (T (0))
-  , _end (T (0)) {}
+  , _start (Measure ())
+  , _end (Measure ()) {}
   
-template <class T>
-void Meter <T>:: start () {
+template <class Measure, class Unit>
+void Meter <Measure, Unit>:: start () {
   _start = _f();
 }
 
-template <class T>
-void Meter <T>:: stop () {
+template <class Measure, class Unit>
+void Meter <Measure, Unit>:: stop () {
   _end = _f();
 }
 
-template <class T>
-T Meter <T>:: peak () {
+template <class Measure, class Unit>
+Unit Meter <Measure, Unit>:: peak () {
   return _end - _start;
 }
 
-template <class T>
-void Meter <T>:: reset () {
-  _start = T (0);
-  _end = T (0);
+template <class Measure, class Unit>
+void Meter <Measure, Unit>:: reset () {
+  _start = Measure ();
+  _end = Measure ();
 }

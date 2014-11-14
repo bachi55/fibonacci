@@ -14,7 +14,7 @@ ulong FibonacciLUT:: lookfor (uint n) const {
     char buffer[128]; 
     std::sprintf (buffer, "Error: No Fibonacci-LUT entry for %i (nMax = %i)\n", n, _nMax);
     
-    throw std::runtime_error (std::string (buffer));
+    throw std::invalid_argument (std::string (buffer));
   }
     
   return _LUT[n];
@@ -22,14 +22,17 @@ ulong FibonacciLUT:: lookfor (uint n) const {
 
 // Implementation; see header-file for description
 //
-// TODO: Check for overflow.
+// No check for overflow needed. If one would occure, the user would be alread
+// quite old.
 ulong getnFibonacciNumber (uint n) {
-  return n >= 2 ? getnFibonacciNumber (n - 1) + getnFibonacciNumber (n - 2) : n;
+  if (n < 2) return n;
+  
+  return getnFibonacciNumber (n - 1) + getnFibonacciNumber (n - 2);
 }
 
 // Implementation; see header-file for description
 ulong getnFibonacciNumber2 (uint n) {
-  if (n < 2) return n;
+  
   
   std::vector <ulong> res (n + 1);
   res[0] = 0; res[1] = 1;

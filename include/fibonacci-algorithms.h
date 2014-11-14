@@ -57,7 +57,6 @@ ulong getnFibonacciNumber5 (uint n);
 
 // Function which realizes the exponentiation by squaring for double.
 //
-// TODO: check for rvalue moving? 
 // TODO: check for template!
 double exponentiationBySquaring (double x, uint n);
 

@@ -18,7 +18,7 @@ Matrix <T> ::Matrix (uint nrow, uint ncol, std::vector<T>&& data)
   , _data (data) {
     
   if ((_nrow * _ncol) != data.size())
-    throw std::runtime_error ("Error: matrix construction failed, nrow * ncol should be equal data.size");
+    throw std::invalid_argument ("Error: matrix construction failed, nrow * ncol should be equal data.size");
     
   _init = true;
   
@@ -39,7 +39,7 @@ template <class T>
 T& Matrix <T> ::operator() (const uint row, const uint col) {
   
   if ((row > (_nrow - 1)) || (col > (_ncol - 1)))
-    throw std::runtime_error ("Error: index out of bounce.");
+    throw std::invalid_argument ("Error: matrix index out of bounce.");
   
   return _data[row * _ncol + col];
   
@@ -49,7 +49,7 @@ template <class T>
 const T & Matrix <T> ::operator() (const uint row, const uint col) const {
   
   if ((row > (_nrow - 1)) || (col > (_ncol - 1)))
-    throw std::runtime_error ("Error: index out of bounce.");
+    throw std::invalid_argument ("Error: matrix index out of bounce.");
   
   return _data[row * _ncol + col];
   
@@ -60,7 +60,7 @@ template <class T>
 Matrix <T> Matrix <T> ::operator* (const Matrix <T> & rhs) {
   
   if ((*this)._ncol != rhs._nrow)
-     throw std::runtime_error ("Error: matrix dimension does not fit.");
+     throw std::invalid_argument ("Error: matrix dimension does not fit.");
   
   Matrix <T> res ((*this)._nrow, rhs._ncol, std::vector <T> ((*this)._nrow * rhs._ncol, 0));
   
