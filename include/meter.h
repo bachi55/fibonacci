@@ -2,8 +2,10 @@
 #define METER_H
 
 #include <chrono>
+#include <cstdint>
 #include <functional>
 
+// TODO: How to pass arguments to _f, which could be void, without pulting the interface?
 template <class Measure, class Unit>
 class Meter {
   std::function <Measure (void)> _f;
@@ -37,11 +39,22 @@ public:
 // Types and function for measurements time
 typedef std::chrono::system_clock::time_point			timePoint ;
 typedef std::chrono::microseconds 				microseconds;
+typedef std::chrono::nanoseconds 				nanoseconds;
 typedef std::chrono::duration <long, std::ratio<1,1000000000>> 	timeDuration;
 
 // Function to return the current time of the system_clock in microseconds.
 timePoint myClock (void);
 
-unsigned int theAnswer (void);
+// ---------------------------------------------------------------------
+// DUMMY
+// ---------------------------------------------------------------------
+
+uint theAnswer (void);
+
+// ---------------------------------------------------------------------
+// CYCLES
+// --------------------------------------------------------------------- 
+
+ulong myCycles (void);
 
 #endif
