@@ -38,6 +38,8 @@ OUT 		:= bin
 BINARY_BUILD 	:= $(OUT)/fibonacci
 BINARY_TEST 	:= $(OUT)/unittest
 
+MEASUREMENTS_OUT:= measurements
+
 .PHONY: all
 all : build
 
@@ -47,7 +49,7 @@ build : $(BINARY_BUILD)
 .PHONY: tests
 tests : CXXFLAGS += $(CXXGTESTFLAGS)
 tests : LDFLAGS  += $(LDGTESTFLAGS)
-tests : $(BINARY_TEST)
+tests : $(BINARY_TEST) | $(MEASUREMENTS_OUT)/
 	@exec $(BINARY_TEST)
 
 # | reffers to a 'order-only' prerequisite. It requiers make 3.80!
@@ -59,6 +61,9 @@ $(BINARY_TEST) : $(OBJECTS) $(OBJECTS_TEST) | $(OUT)/
 	$(LD) $^ $(LDFLAGS) -o $@
 
 $(OUT)/ :
+	$(MKDIR) $@
+
+$(MEASUREMENTS_OUT) :
 	$(MKDIR) $@
 	
 .PHONY: clean

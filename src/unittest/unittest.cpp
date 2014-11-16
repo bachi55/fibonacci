@@ -271,45 +271,45 @@ TEST (statistics, var) {
   ASSERT_EQ (calculateVar ({1, 1, 1}), 0);
 }
 
-TEST (measurements, time_algo1) {
-  std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-time";
-  FILE * ofile = std::fopen (filename.c_str(), "w+");
-  if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
-  
-  std::fprintf (ofile, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-  
-  std::vector <double> times (6);
-  Meter <timePoint, timeDuration> meter (myClock);
-  for (uint n = 0; n <= 45; n++) {
-    for (uint run = 0; run < 6; run++) {
-      std::printf ("%u\n", n);
-      meter.start();
-      getnFibonacciNumber (n);
-      meter.stop();
-      times[run] = std::chrono::duration_cast <nanoseconds> (meter.peak()).count();
-      meter.reset();
-    }
-    
-    double min = (*std::min_element (times.begin(), times.end()));
-    double max = (*std::max_element (times.begin(), times.end()));
-    
-    double mean = calcualteMean (times);
-    double sd   = sqrt (calculateVar (times));
-    
-    // Time should be written out in [us] (= mircoseconds)
-    min  /= 1000.0;
-    max  /= 1000.0;
-    mean /= 1000.0;
-    sd   /= 1000.0;
-    std::for_each (times.begin(), times.end(), [](double & x){ x /= 1000.0; });
-    
-    std::fprintf (ofile, "# %2u %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n",
-		  n, min, max, mean, sd, times[0], times[1], times[2], times[3], times[4], times[5]
-	 );
-  }
-  
-  fclose (ofile);
-}
+// TEST (measurements, time_algo1) {
+//   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-time";
+//   FILE * ofile = std::fopen (filename.c_str(), "w+");
+//   if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+//   
+//   std::fprintf (ofile, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+//   
+//   std::vector <double> times (6);
+//   Meter <timePoint, timeDuration> meter (myClock);
+//   for (uint n = 0; n <= 45; n++) {
+//     for (uint run = 0; run < 6; run++) {
+//       std::printf ("%u\n", n);
+//       meter.start();
+//       getnFibonacciNumber (n);
+//       meter.stop();
+//       times[run] = std::chrono::duration_cast <nanoseconds> (meter.peak()).count();
+//       meter.reset();
+//     }
+//     
+//     double min = (*std::min_element (times.begin(), times.end()));
+//     double max = (*std::max_element (times.begin(), times.end()));
+//     
+//     double mean = calcualteMean (times);
+//     double sd   = sqrt (calculateVar (times));
+//     
+//     // Time should be written out in [us] (= mircoseconds)
+//     min  /= 1000.0;
+//     max  /= 1000.0;
+//     mean /= 1000.0;
+//     sd   /= 1000.0;
+//     std::for_each (times.begin(), times.end(), [](double & x){ x /= 1000.0; });
+//     
+//     std::fprintf (ofile, "# %2u %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n",
+// 		  n, min, max, mean, sd, times[0], times[1], times[2], times[3], times[4], times[5]
+// 	 );
+//   }
+//   
+//   fclose (ofile);
+// }
 
 // TEST (measurements, time_algo2) {
 //   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo2-time";
@@ -509,39 +509,39 @@ TEST (measurements, time_algo1) {
 //   fclose (ofile);
 // }
 
-TEST (measurements, cycles_algo1) {
-  std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-cycles";
-  FILE * ofile = std::fopen (filename.c_str(), "w+");
-  if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
-  
-  std::fprintf (ofile, "# %2s %15s %15s %15s %15s %15s\n", "n", "min [cyc]", "max [cyc]", "mean [cyc]", "sd [cyc]", "measurements [cyc]");
-  
-  std::vector <double> cylces (6);
-  Meter <ulong, ulong> meter (myCycles);
-  for (uint n = 0; n <= 45; n++) {
-    for (uint run = 0; run < 6; run++) {
-      std::printf ("%u\n", n);
-      meter.start();
-      getnFibonacciNumber (n);
-      meter.stop();
-      cylces[run] = meter.peak();
-      meter.reset();
-    }
-    
-    ulong min = (*std::min_element (cylces.begin(), cylces.end()));
-    ulong max = (*std::max_element (cylces.begin(), cylces.end()));
-    
-    double mean = calcualteMean (cylces);
-    double sd   = sqrt (calculateVar (cylces));
-    
-    
-    std::fprintf (ofile, "# %2u %15lu %15lu %15.3f %15.3f %15.0f %15.0f %15.0f %15.0f %15.0f %15.0f\n",
-		  n, min, max, mean, sd, cylces[0], cylces[1], cylces[2], cylces[3], cylces[4], cylces[5]
-	 );
-  }
-  
-  fclose (ofile);
-}
+// TEST (measurements, cycles_algo1) {
+//   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-cycles";
+//   FILE * ofile = std::fopen (filename.c_str(), "w+");
+//   if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+//   
+//   std::fprintf (ofile, "# %2s %15s %15s %15s %15s %15s\n", "n", "min [cyc]", "max [cyc]", "mean [cyc]", "sd [cyc]", "measurements [cyc]");
+//   
+//   std::vector <double> cylces (6);
+//   Meter <ulong, ulong> meter (myCycles);
+//   for (uint n = 0; n <= 45; n++) {
+//     for (uint run = 0; run < 6; run++) {
+//       std::printf ("%u\n", n);
+//       meter.start();
+//       getnFibonacciNumber (n);
+//       meter.stop();
+//       cylces[run] = meter.peak();
+//       meter.reset();
+//     }
+//     
+//     ulong min = (*std::min_element (cylces.begin(), cylces.end()));
+//     ulong max = (*std::max_element (cylces.begin(), cylces.end()));
+//     
+//     double mean = calcualteMean (cylces);
+//     double sd   = sqrt (calculateVar (cylces));
+//     
+//     
+//     std::fprintf (ofile, "# %2u %15lu %15lu %15.3f %15.3f %15.0f %15.0f %15.0f %15.0f %15.0f %15.0f\n",
+// 		  n, min, max, mean, sd, cylces[0], cylces[1], cylces[2], cylces[3], cylces[4], cylces[5]
+// 	 );
+//   }
+//   
+//   fclose (ofile);
+// }
 
 TEST (measurements, cycles_algo2) {
   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo2-cycles";
