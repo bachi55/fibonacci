@@ -8,10 +8,6 @@
 
 #include <gtest/gtest.h>
 
-// typedef std::function<ulong(ulong)> FibFunc
-// FibFunc f = getnFibonacciNumber
-// f(0)
-
 // Test the functionality of the 1st Fibonacci Number Algorithm
 //
 // Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
@@ -334,74 +330,76 @@ TEST (statistics, var) {
   ASSERT_EQ (calculateVar <int> ({1, 1, 1}), 0);
 }
 
-// TEST (benchmark, algo1) {
-//   
-//   // implementation to benchmark
-//   
-//   std::function <ulong (uint)> implementation = getnFibonacciNumber;
-//   
-//   // format the output 
-//   // TODO: realize output stuff with streams!
-//   
-//   std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-time";
-//   std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-cycles";
-//   
-//   char temp [256];
-//   std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-//   std::string header (temp);
-//   
-//   // configure benchmark
-//   
-//   uint nruns = 10;
-//   std::vector <uint> algorithmParameter (40);
-//   // fill vector with the numbers from 0 to 39
-//   std::iota (algorithmParameter.begin(), algorithmParameter.end(), 0);
-//   
-//   // store measurements
-//   
-//   Matrix <timeDuration> timeDurationMeasurements (algorithmParameter.size(), nruns, timeDuration());
-//   Matrix <ulong> cycleMeasurements (algorithmParameter.size(), nruns, 0);
-//   
-//   // run benchmark
-//   
-//   // time
-//   std::for_each (algorithmParameter.begin(), algorithmParameter.end()
-//     , [implementation, nruns, &timeDurationMeasurements] (uint param)
-//     {
-//       timeDurationMeasurements.setRow (param
-// 				     , benchmark <timeDuration, timePoint, ulong, uint> (myClock, nruns, implementation, param));
-//     }
-//   );
-//   
-//   // cycles
-//   std::for_each (algorithmParameter.begin(), algorithmParameter.end()
-//     , [implementation, nruns, &cycleMeasurements] (uint param)
-//     {
-//       cycleMeasurements.setRow (param
-// 			      , benchmark <ulong, ulong, ulong, uint> (myCycles, nruns, implementation, param));
-//     }
-//   );
-// 
-//   // cast from the measurering unit into something printable and write measurements to file
-//   // TODO: could be done with an toString() like structure
-//   
-//   // time
-//   Matrix <double> measurements (timeDurationMeasurements.rows(), timeDurationMeasurements.cols(), 0.0);
-//   for (uint i = 0; i < timeDurationMeasurements.rows(); i++) for (uint j = 0; j < timeDurationMeasurements.cols(); j++) {
-//     measurements(i,j) = double (std::chrono::duration_cast <nanoseconds> (timeDurationMeasurements(i,j)).count());
-//     measurements(i,j) /= 1000.0;
-//   }
-//   
-//   writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
-//   
-//   // cycles
-//   
-//   for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
-//     measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
-//   
-//   writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
-//   
-// }
+TEST (benchmark, algo1) {
+  
+  // implementation to benchmark
+  
+  std::function <ulong (uint)> implementation = getnFibonacciNumber;
+  
+  // format the output 
+  // TODO: realize output stuff with streams!
+  
+  std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-time";
+  std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-cycles";
+
+  char temp [256];
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[us]", "max[us]", "mean[us]", "sd[us]", "measurements[us]");
+  std::string headerTimes (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[cyc]", "max[cyc]", "mean[cyc]", "sd[cyc]", "measurements[cyc]");
+  std::string headerCycles (temp);
+  
+  // configure benchmark
+  
+  uint nruns = 10;
+  std::vector <uint> algorithmParameter (40);
+  // fill vector with the numbers from 0 to 39
+  std::iota (algorithmParameter.begin(), algorithmParameter.end(), 0);
+  
+  // store measurements
+  
+  Matrix <timeDuration> timeDurationMeasurements (algorithmParameter.size(), nruns, timeDuration());
+  Matrix <ulong> cycleMeasurements (algorithmParameter.size(), nruns, 0);
+  
+  // run benchmark
+  
+  // time
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &timeDurationMeasurements] (uint param)
+    {
+      timeDurationMeasurements.setRow (param
+				     , benchmark <timeDuration, timePoint, ulong, uint> (myClock, nruns, implementation, param));
+    }
+  );
+  
+  // cycles
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &cycleMeasurements] (uint param)
+    {
+      cycleMeasurements.setRow (param
+			      , benchmark <ulong, ulong, ulong, uint> (myCycles, nruns, implementation, param));
+    }
+  );
+
+  // cast from the measurering unit into something printable and write measurements to file
+  // TODO: could be done with an toString() like structure
+  
+  // time
+  Matrix <double> measurements (timeDurationMeasurements.rows(), timeDurationMeasurements.cols(), 0.0);
+  for (uint i = 0; i < timeDurationMeasurements.rows(); i++) for (uint j = 0; j < timeDurationMeasurements.cols(); j++) {
+    measurements(i,j) = double (std::chrono::duration_cast <nanoseconds> (timeDurationMeasurements(i,j)).count());
+    measurements(i,j) /= 1000.0;
+  }
+  
+  writeMeasurements <double> (filename_time, headerTimes, algorithmParameter, measurements);
+  
+  // cycles
+  
+  for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
+    measurements(i,j) = double (cycleMeasurements(i,j));
+  
+  writeMeasurements <double> (filename_cycles, headerCycles, algorithmParameter, measurements);
+  
+}
 
 TEST (benchmark, algo2) {
   
@@ -416,8 +414,10 @@ TEST (benchmark, algo2) {
   std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo2-cycles";
   
   char temp [256];
-  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-  std::string header (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[us]", "max[us]", "mean[us]", "sd[us]", "measurements[us]");
+  std::string headerTimes (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[cyc]", "max[cyc]", "mean[cyc]", "sd[cyc]", "measurements[cyc]");
+  std::string headerCycles (temp);
   
   // configure benchmark
   
@@ -461,14 +461,14 @@ TEST (benchmark, algo2) {
     measurements(i,j) /= 1000.0;
   }
   
-  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_time, headerTimes, algorithmParameter, measurements);
   
   // cycles
   
   for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
-    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+    measurements(i,j) = double (cycleMeasurements(i,j));
   
-  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_cycles, headerCycles, algorithmParameter, measurements);
   
 }
 
@@ -485,8 +485,10 @@ TEST (benchmark, algo3) {
   std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo3-cycles";
   
   char temp [256];
-  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-  std::string header (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[us]", "max[us]", "mean[us]", "sd[us]", "measurements[us]");
+  std::string headerTimes (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[cyc]", "max[cyc]", "mean[cyc]", "sd[cyc]", "measurements[cyc]");
+  std::string headerCycles (temp); 
   
   // configure benchmark
   
@@ -530,14 +532,14 @@ TEST (benchmark, algo3) {
     measurements(i,j) /= 1000.0;
   }
   
-  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_time, headerTimes, algorithmParameter, measurements);
   
   // cycles
   
   for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
-    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+    measurements(i,j) = double (cycleMeasurements(i,j));
   
-  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_cycles, headerCycles, algorithmParameter, measurements);
   
 }
 
@@ -552,10 +554,12 @@ TEST (benchmark, algo4) {
   
   std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo4-time";
   std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo4-cycles";
-  
+
   char temp [256];
-  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-  std::string header (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[us]", "max[us]", "mean[us]", "sd[us]", "measurements[us]");
+  std::string headerTimes (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[cyc]", "max[cyc]", "mean[cyc]", "sd[cyc]", "measurements[cyc]");
+  std::string headerCycles (temp);
   
   // configure benchmark
   
@@ -599,14 +603,14 @@ TEST (benchmark, algo4) {
     measurements(i,j) /= 1000.0;
   }
   
-  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_time, headerTimes, algorithmParameter, measurements);
   
   // cycles
   
   for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
-    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+    measurements(i,j) = double (cycleMeasurements(i,j));
   
-  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_cycles, headerCycles, algorithmParameter, measurements);
   
 }
 
@@ -621,10 +625,12 @@ TEST (benchmark, algo5) {
   
   std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo5-time";
   std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo5-cycles";
-  
+
   char temp [256];
-  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-  std::string header (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[us]", "max[us]", "mean[us]", "sd[us]", "measurements[us]");
+  std::string headerTimes (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[cyc]", "max[cyc]", "mean[cyc]", "sd[cyc]", "measurements[cyc]");
+  std::string headerCycles (temp);
   
   // configure benchmark
   
@@ -668,14 +674,14 @@ TEST (benchmark, algo5) {
     measurements(i,j) /= 1000.0;
   }
   
-  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_time, headerTimes, algorithmParameter, measurements);
   
   // cycles
   
   for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
-    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+    measurements(i,j) = double (cycleMeasurements(i,j));
   
-  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_cycles, headerCycles, algorithmParameter, measurements);
   
 }
 
@@ -692,8 +698,10 @@ TEST (benchmark, algo6) {
   std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo6-cycles";
   
   char temp [256];
-  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-  std::string header (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[us]", "max[us]", "mean[us]", "sd[us]", "measurements[us]");
+  std::string headerTimes (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[cyc]", "max[cyc]", "mean[cyc]", "sd[cyc]", "measurements[cyc]");
+  std::string headerCycles (temp);
   
   // configure benchmark
   
@@ -739,14 +747,14 @@ TEST (benchmark, algo6) {
     measurements(i,j) /= 1000.0;
   }
   
-  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_time, headerTimes, algorithmParameter, measurements);
   
   // cycles
   
   for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
-    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+    measurements(i,j) = double (cycleMeasurements(i,j));
   
-  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_cycles, headerCycles, algorithmParameter, measurements);
   
 }
 
@@ -763,8 +771,10 @@ TEST (benchmark, algo7) {
   std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo7-cycles";
   
   char temp [256];
-  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-  std::string header (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[us]", "max[us]", "mean[us]", "sd[us]", "measurements[us]");
+  std::string headerTimes (temp);
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min[cyc]", "max[cyc]", "mean[cyc]", "sd[cyc]", "measurements[cyc]");
+  std::string headerCycles (temp);
   
   // configure benchmark
   
@@ -808,14 +818,14 @@ TEST (benchmark, algo7) {
     measurements(i,j) /= 1000.0;
   }
   
-  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_time, headerTimes, algorithmParameter, measurements);
   
   // cycles
   
   for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
-    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+    measurements(i,j) = double (cycleMeasurements(i,j));
   
-  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  writeMeasurements <double> (filename_cycles, headerCycles, algorithmParameter, measurements);
   
 }
 
