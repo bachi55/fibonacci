@@ -1,14 +1,14 @@
 #include "matrix.h"
-
+/*
 template <class T>
 Matrix <T> ::Matrix ()
   : Matrix (0, 0) {}
-  
+  */
 template <class T>
-Matrix <T> ::Matrix (uint nrow, uint ncol) 
+Matrix <T> ::Matrix (uint nrow, uint ncol, const T & initElement) 
   : _nrow (nrow)
   , _ncol (ncol)
-  , _data (std::vector<T>()) 
+  , _data (std::vector <T> (_nrow * _ncol, initElement)) 
   , _init (false) {}
 
 template <class T>
@@ -36,7 +36,7 @@ void Matrix <T> ::printMatrix () {
 }
 
 template <class T>
-T& Matrix <T> ::operator() (const uint row, const uint col) {
+T& Matrix <T> ::operator() (uint row, uint col) {
   
   if ((row > (_nrow - 1)) || (col > (_ncol - 1)))
     throw std::invalid_argument ("Error: matrix index out of bounce.");
@@ -46,7 +46,7 @@ T& Matrix <T> ::operator() (const uint row, const uint col) {
 }
 
 template <class T>
-const T & Matrix <T> ::operator() (const uint row, const uint col) const {
+const T & Matrix <T> ::operator() (uint row, uint col) const {
   
   if ((row > (_nrow - 1)) || (col > (_ncol - 1)))
     throw std::invalid_argument ("Error: matrix index out of bounce.");
@@ -73,7 +73,49 @@ Matrix <T> Matrix <T> ::operator* (const Matrix <T> & rhs) {
   
 }
 
+template <class T>
+std::vector <T> Matrix <T> ::getRow (uint row) const {
+  
+  if (row > (_nrow - 1))
+    throw std::invalid_argument ("Error: matrix index out of bounce.");
+  
+  return 
+    std::vector <T> (_data.begin() + ((_ncol) * row), _data.begin() + ((_ncol) * row + _ncol));
+  
+}
+
+template <class T>
+void Matrix <T> ::setRow (uint row, std::vector <T> && newData) {
+  
+  if (row > (_nrow - 1))
+    throw std::invalid_argument ("Error: matrix index out of bounce.");
+  
+  if ( newData.size() != (_ncol))
+    throw std::invalid_argument ("Error: New row does not have the correct size.");
+  
+  auto rowData 	    = _data.begin() + ((_ncol) * row);
+  
+  for (auto newRowData = newData.begin (); newRowData != newData.end(); ++newRowData, ++rowData) {
+    (*rowData) = (*newRowData);
+  }
+  
+}
+
+template <typename T>
+Matrix <T> createIdentityMatrix (uint nrow) {
+  Matrix <T> E = Matrix <T> (nrow, nrow, T(0));
+  
+  for (uint i = 0; i < nrow; i++) E (i,i) = T(1);
+  
+  return E;
+}
+
 // Specializing a member function template need to be done in an .cpp file, since otherwise the
 // template would need be anymore a template.
 template <>
 void Matrix <ulong> ::printMatrix ();
+
+template <>
+void Matrix <timeDuration> ::printMatrix ();
+
+

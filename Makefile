@@ -22,7 +22,7 @@ endif
 CXXFLAGS += -Iinclude
 
 # Flags related to the google-test
-CXXGTESTFLAGS 	:= -DRDTSCP_SUPPORT -isystem $(GTEST_DIR)/include -pthread 
+CXXGTESTFLAGS 	:= -isystem $(GTEST_DIR)/include -pthread 
 LDGTESTFLAGS 	:= -L$(GTEST_DIR)/lib -lgtest -pthread
 
 SOURCES 	:= $(wildcard src/*.cpp)

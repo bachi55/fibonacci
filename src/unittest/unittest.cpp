@@ -1,38 +1,12 @@
 #include "fibonacci-algorithms.h"
 #include "meter.h"
+#include "mytypes.h"
 
 #include <cstdio>
 #include <chrono>
 #include <string>
 
 #include <gtest/gtest.h>
-
-// ---------------------------------------------------------------------
-// Local helper functions TODO: Maybe move somewhere else!
-// ---------------------------------------------------------------------
-
-double calcualteMean (const std::vector<double> & x) {
-  if (x.size() == 0) throw std::runtime_error ("Error: Mean of an empty vector is not defined!");
-  
-  double sum = 0.0; 
-  for (auto it = x.begin(); it != x.end(); ++it) 
-    sum += (*it);
-  
-  return sum / x.size();
-}
-
-double calculateVar (const std::vector<double> & x) {
-  if (x.size() == 0) throw std::runtime_error ("Error: Variance of an empty vector is not defined!");
-  
-  double var = 0.0;
-  double mean = calcualteMean (x);
-  
-  for (auto it = x.begin(); it != x.end(); ++it) 
-    var += ((*it) - mean) * ((*it) - mean );
-  
-  return var / x.size();
-}
-
 
 // typedef std::function<ulong(ulong)> FibFunc
 // FibFunc f = getnFibonacciNumber
@@ -112,30 +86,71 @@ double calculateVar (const std::vector<double> & x) {
 // Test the functionality of the matrix class implementation
 //
 // Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
-// TEST (matrix, correctness) {
-//   
-//   Matrix <ulong> m1 (2, 2, {1, 2, 3, 4});
-//   ASSERT_EQ (m1 (0, 0), 1);
-//   ASSERT_EQ (m1 (0, 1), 2);
-//   ASSERT_EQ (m1 (1, 0), 3);
-//   ASSERT_EQ (m1 (1, 1), 4);
-//   
-//   Matrix <ulong> m2 (2, 2, {1, 0, 0, 1});
-//   Matrix <ulong> prod = m1 * m2;
-//   ASSERT_EQ (prod (0, 0), 1);
-//   ASSERT_EQ (prod (0, 1), 2);
-//   ASSERT_EQ (prod (1, 0), 3);
-//   ASSERT_EQ (prod (1, 1), 4);
-//   
-//   // calculate the covariance matrix
-//   Matrix <ulong> m1t = Matrix <ulong> (2, 2, {1, 3, 2, 4});
-//   Matrix <ulong> cov = m1 * m1t;
-//   ASSERT_EQ (cov (0, 0),  5);
-//   ASSERT_EQ (cov (0, 1), 11);
-//   ASSERT_EQ (cov (1, 0), 11);
-//   ASSERT_EQ (cov (1, 1), 25);
-// 
-// }
+TEST (matrix, correctness) {
+  
+  Matrix <ulong> m1 (2, 2, {1, 2, 3, 4});
+  ASSERT_EQ (m1 (0, 0), 1);
+  ASSERT_EQ (m1 (0, 1), 2);
+  ASSERT_EQ (m1 (1, 0), 3);
+  ASSERT_EQ (m1 (1, 1), 4);
+  
+  Matrix <ulong> m2 (2, 2, {1, 0, 0, 1});
+  Matrix <ulong> prod = m1 * m2;
+  ASSERT_EQ (prod (0, 0), 1);
+  ASSERT_EQ (prod (0, 1), 2);
+  ASSERT_EQ (prod (1, 0), 3);
+  ASSERT_EQ (prod (1, 1), 4);
+  
+  // calculate the covariance matrix
+  Matrix <ulong> m1t = Matrix <ulong> (2, 2, {1, 3, 2, 4});
+  Matrix <ulong> cov = m1 * m1t;
+  ASSERT_EQ (cov (0, 0),  5);
+  ASSERT_EQ (cov (0, 1), 11);
+  ASSERT_EQ (cov (1, 0), 11);
+  ASSERT_EQ (cov (1, 1), 25);
+
+  Matrix <ulong> m3 (3, 3, {5, 6, 7, 1, 2, 3, 9, 9, 9});
+//   m3.printMatrix();
+  std::vector <ulong> row (m3.getRow (0));
+  std::printf ("\n%lu %lu %lu\n\n", row[0], row[1], row[2]);
+  ASSERT_EQ (row.size(), 3);
+  ASSERT_EQ (row[0], 5); ASSERT_EQ (row[1], 6); ASSERT_EQ (row[2], 7); 
+  row = m3.getRow (2);
+  ASSERT_EQ (row[0], 9); ASSERT_EQ (row[1], 9); ASSERT_EQ (row[2], 9); 
+  
+  m3.setRow (2, {20, 21, 22});
+//   m3.printMatrix();
+  
+  Matrix <ulong> m4 = createIdentityMatrix <ulong> (4);
+//   m4.printMatrix();
+}
+
+
+TEST (cpp_feature, variadic_template) {
+  
+  // TODO: Lambda-functions are nice! So learn more about this!
+  auto sum = [](int a, int b) { return a + b; }; 
+  {
+    std::function <int (int, int)> f = sum;
+    int res = execute <int, int, int> (f, 1, 3);
+    ASSERT_EQ (res, 4);
+  }
+  
+  auto writeln = [](const char* line) { std::puts (line); };
+  {
+    std::function <void (const char*)> f = writeln;
+    execute <void, const char*> (f, "Hello World!");
+  }
+  
+  auto increment = [](int& x) { x++; }; 
+  {
+    int number = 10;
+    std::function <void (int &)> f = increment; 
+    execute <void, int&> (f, number);
+    ASSERT_EQ (number, 11);
+  }
+  
+}
 
 // Test the functionality of the 5th Fibonacci Number Algorithm
 //
@@ -175,6 +190,25 @@ double calculateVar (const std::vector<double> & x) {
 //   ASSERT_EQ (getnFibonacciNumber6 (LUT, 23), getnFibonacciNumber3 (23));
 //   
 // }
+
+// Test the functionality of the 5th Fibonacci Number Algorithm
+//
+// Using the 'TEST' macro requires to run 'testing::InitGoogleTest'.
+TEST (functionality_7, correctness) {
+ 
+  ASSERT_EQ (getnFibonacciNumber7 (0), 0);
+  ASSERT_EQ (getnFibonacciNumber7 (1), 1); 
+  ASSERT_EQ (getnFibonacciNumber7 (2), 1); 
+  ASSERT_EQ (getnFibonacciNumber7 (3), 2);
+  ASSERT_EQ (getnFibonacciNumber7 (4), 3);
+  ASSERT_EQ (getnFibonacciNumber7 (5), 5);
+  
+  ASSERT_EQ (getnFibonacciNumber7 (12), getnFibonacciNumber4 (12));
+  ASSERT_EQ (getnFibonacciNumber7 (20), getnFibonacciNumber4 (20));
+  ASSERT_EQ (getnFibonacciNumber7 (22), getnFibonacciNumber4 (22));
+  ASSERT_EQ (getnFibonacciNumber7 (23), getnFibonacciNumber4 (23));
+  
+}
 
 // TEST (make_a_test, fail) {
  
@@ -248,466 +282,541 @@ double calculateVar (const std::vector<double> & x) {
 //   
 // }
 
-// TODO: How to test cycle measurements? Does an instruction every time it is executed has the amount of cycles?
-// TEST (measurements, cycles) {
-//   Meter <ulong, ulong> meter (myCycles);
-//   meter.start();
-//   5 + 5;
-//   meter.stop();
-//   std::printf ("%lu\n", meter.peak());
-// }
+TEST (measurements, cycles) {
+  uint64_t start, end, peak;
+  int res;
+  cpuid (0);
+  start = rdtsc();
+  res = 5 + 5;
+  end = rdtscp(); 
+  cpuid (0);
+  peak = end - start;
+  
+  std::printf ("Methode according to the Paper: \t %lu \n", peak);
+  
+  start = rdtscp();
+  res = 5 + 5;
+  end = rdtscp(); 
+  peak = end - start;
+  
+  std::printf ("No serialization: \t\t\t %lu\n", peak);
+  
+  cpuid (0);
+  start = rdtsc();
+  res = 5 + 5;
+  cpuid (0);
+  end = rdtsc(); 
+  peak = end - start;
+  
+  std::printf ("Methode from the lecture: \t\t %lu\n", peak);
+  
+  Meter <uint64_t, uint64_t> meter (myCycles);
+  meter.start();
+  res = 5 + 5;
+  meter.stop();
+  
+  std::printf ("Methode from the lecture (meter class):  %lu\n", meter.peak());
+  
+  std::printf ("%i\n", res);
+}
 
 TEST (statistics, mean) {
-  ASSERT_EQ (calcualteMean ({1, 2, 3}), 2);
-  ASSERT_EQ (calcualteMean ({1}), 1);
-  ASSERT_EQ (calcualteMean ({1, 2}), 1.5);
-  ASSERT_EQ (calcualteMean ({1, 1, 1}), 1);
+  ASSERT_EQ (calcualteMean <int> ({1, 2, 3}), 2);
+  ASSERT_EQ (calcualteMean <int> ({1}), 1);
+  ASSERT_EQ (calcualteMean <int> ({1, 2}), 1.5);
+  ASSERT_EQ (calcualteMean <int> ({1, 1, 1}), 1);
 }
 
 TEST (statistics, var) {
-  ASSERT_EQ (calculateVar ({1, 2, 3}), 2.0 / 3.0);
-  ASSERT_EQ (calculateVar ({1}), 0);
-  ASSERT_EQ (calculateVar ({1, 2}), 0.25);
-  ASSERT_EQ (calculateVar ({1, 1, 1}), 0);
+  ASSERT_EQ (calculateVar <int> ({1, 2, 3}), 2.0 / 3.0);
+  ASSERT_EQ (calculateVar <int> ({1}), 0);
+  ASSERT_EQ (calculateVar <int> ({1, 2}), 0.25);
+  ASSERT_EQ (calculateVar <int> ({1, 1, 1}), 0);
 }
 
-// TEST (measurements, time_algo1) {
-//   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-time";
-//   FILE * ofile = std::fopen (filename.c_str(), "w+");
-//   if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+// TEST (benchmark, algo1) {
 //   
-//   std::fprintf (ofile, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+//   // implementation to benchmark
 //   
-//   std::vector <double> times (6);
-//   Meter <timePoint, timeDuration> meter (myClock);
-//   for (uint n = 0; n <= 45; n++) {
-//     for (uint run = 0; run < 6; run++) {
-//       std::printf ("%u\n", n);
-//       meter.start();
-//       getnFibonacciNumber (n);
-//       meter.stop();
-//       times[run] = std::chrono::duration_cast <nanoseconds> (meter.peak()).count();
-//       meter.reset();
+//   std::function <ulong (uint)> implementation = getnFibonacciNumber;
+//   
+//   // format the output 
+//   // TODO: realize output stuff with streams!
+//   
+//   std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-time";
+//   std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-cycles";
+//   
+//   char temp [256];
+//   std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+//   std::string header (temp);
+//   
+//   // configure benchmark
+//   
+//   uint nruns = 10;
+//   std::vector <uint> algorithmParameter (40);
+//   // fill vector with the numbers from 0 to 39
+//   std::iota (algorithmParameter.begin(), algorithmParameter.end(), 0);
+//   
+//   // store measurements
+//   
+//   Matrix <timeDuration> timeDurationMeasurements (algorithmParameter.size(), nruns, timeDuration());
+//   Matrix <ulong> cycleMeasurements (algorithmParameter.size(), nruns, 0);
+//   
+//   // run benchmark
+//   
+//   // time
+//   std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+//     , [implementation, nruns, &timeDurationMeasurements] (uint param)
+//     {
+//       timeDurationMeasurements.setRow (param
+// 				     , benchmark <timeDuration, timePoint, ulong, uint> (myClock, nruns, implementation, param));
 //     }
-//     
-//     double min = (*std::min_element (times.begin(), times.end()));
-//     double max = (*std::max_element (times.begin(), times.end()));
-//     
-//     double mean = calcualteMean (times);
-//     double sd   = sqrt (calculateVar (times));
-//     
-//     // Time should be written out in [us] (= mircoseconds)
-//     min  /= 1000.0;
-//     max  /= 1000.0;
-//     mean /= 1000.0;
-//     sd   /= 1000.0;
-//     std::for_each (times.begin(), times.end(), [](double & x){ x /= 1000.0; });
-//     
-//     std::fprintf (ofile, "# %2u %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n",
-// 		  n, min, max, mean, sd, times[0], times[1], times[2], times[3], times[4], times[5]
-// 	 );
-//   }
+//   );
 //   
-//   fclose (ofile);
-// }
-
-// TEST (measurements, time_algo2) {
-//   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo2-time";
-//   FILE * ofile = std::fopen (filename.c_str(), "w+");
-//   if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
-//   
-//   std::fprintf (ofile, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-//   
-//   std::vector <double> times (6);
-//   Meter <timePoint, timeDuration> meter (myClock);
-//   for (uint n = 0; n <= 93; n++) {
-//     for (uint run = 0; run < 6; run++) {
-//       meter.start();
-//       getnFibonacciNumber2 (n);
-//       meter.stop();
-//       times[run] = std::chrono::duration_cast <nanoseconds> (meter.peak()).count();
-//       meter.reset();
+//   // cycles
+//   std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+//     , [implementation, nruns, &cycleMeasurements] (uint param)
+//     {
+//       cycleMeasurements.setRow (param
+// 			      , benchmark <ulong, ulong, ulong, uint> (myCycles, nruns, implementation, param));
 //     }
-//     
-//     double min = (*std::min_element (times.begin(), times.end()));
-//     double max = (*std::max_element (times.begin(), times.end()));
-//     
-//     double mean = calcualteMean (times);
-//     double sd   = sqrt (calculateVar (times));
-//     
-//     // Time should be written out in [us] (= mircoseconds)
-//     min  /= 1000.0;
-//     max  /= 1000.0;
-//     mean /= 1000.0;
-//     sd   /= 1000.0;
-//     std::for_each (times.begin(), times.end(), [](double & x){ x /= 1000.0; });
-//     
-//     std::fprintf (ofile, "# %2u %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n",
-// 		  n, min, max, mean, sd, times[0], times[1], times[2], times[3], times[4], times[5]
-// 	 );
-//   }
-//   
-//   fclose (ofile);
-// }
+//   );
 // 
-// TEST (measurements, time_algo3) {
-//   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo3-time";
-//   FILE * ofile = std::fopen (filename.c_str(), "w+");
-//   if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+//   // cast from the measurering unit into something printable and write measurements to file
+//   // TODO: could be done with an toString() like structure
 //   
-//   std::fprintf (ofile, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-//   
-//   std::vector <double> times (6);
-//   Meter <timePoint, timeDuration> meter (myClock);
-//   for (uint n = 0; n <= 93; n++) {
-//     for (uint run = 0; run < 6; run++) {
-//       meter.start();
-//       getnFibonacciNumber3 (n);
-//       meter.stop();
-//       times[run] = std::chrono::duration_cast <nanoseconds> (meter.peak()).count();
-//       meter.reset();
-//     }
-//     
-//     double min = (*std::min_element (times.begin(), times.end()));
-//     double max = (*std::max_element (times.begin(), times.end()));
-//     
-//     double mean = calcualteMean (times);
-//     double sd   = sqrt (calculateVar (times));
-//     
-//     // Time should be written out in [us] (= mircoseconds)
-//     min  /= 1000.0;
-//     max  /= 1000.0;
-//     mean /= 1000.0;
-//     sd   /= 1000.0;
-//     std::for_each (times.begin(), times.end(), [](double & x){ x /= 1000.0; });
-//     
-//     std::fprintf (ofile, "# %2u %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n",
-// 		  n, min, max, mean, sd, times[0], times[1], times[2], times[3], times[4], times[5]
-// 	 );
+//   // time
+//   Matrix <double> measurements (timeDurationMeasurements.rows(), timeDurationMeasurements.cols(), 0.0);
+//   for (uint i = 0; i < timeDurationMeasurements.rows(); i++) for (uint j = 0; j < timeDurationMeasurements.cols(); j++) {
+//     measurements(i,j) = double (std::chrono::duration_cast <nanoseconds> (timeDurationMeasurements(i,j)).count());
+//     measurements(i,j) /= 1000.0;
 //   }
 //   
-//   fclose (ofile);
-// }
-// 
-// TEST (measurements, time_algo4) {
-//   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo4-time";
-//   FILE * ofile = std::fopen (filename.c_str(), "w+");
-//   if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+//   writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
 //   
-//   std::fprintf (ofile, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+//   // cycles
 //   
-//   std::vector <double> times (6);
-//   Meter <timePoint, timeDuration> meter (myClock);
-//   for (uint n = 0; n <= 93; n++) {
-//     for (uint run = 0; run < 6; run++) {
-//       meter.start();
-//       getnFibonacciNumber4 (n);
-//       meter.stop();
-//       times[run] = std::chrono::duration_cast <nanoseconds> (meter.peak()).count();
-//       meter.reset();
-//     }
-//     
-//     double min = (*std::min_element (times.begin(), times.end()));
-//     double max = (*std::max_element (times.begin(), times.end()));
-//     
-//     double mean = calcualteMean (times);
-//     double sd   = sqrt (calculateVar (times));
-//     
-//     // Time should be written out in [us] (= mircoseconds)
-//     min  /= 1000.0;
-//     max  /= 1000.0;
-//     mean /= 1000.0;
-//     sd   /= 1000.0;
-//     std::for_each (times.begin(), times.end(), [](double & x){ x /= 1000.0; });
-//     
-//     std::fprintf (ofile, "# %2u %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n",
-// 		  n, min, max, mean, sd, times[0], times[1], times[2], times[3], times[4], times[5]
-// 	 );
-//   }
+//   for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
+//     measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
 //   
-//   fclose (ofile);
-// }
-// 
-// TEST (measurements, time_algo5) {
-//   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo5-time";
-//   FILE * ofile = std::fopen (filename.c_str(), "w+");
-//   if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+//   writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
 //   
-//   std::fprintf (ofile, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-//   
-//   std::vector <double> times (6);
-//   Meter <timePoint, timeDuration> meter (myClock);
-//   for (uint n = 0; n <= 75; n++) {
-//     for (uint run = 0; run < 6; run++) {
-//       meter.start();
-//       getnFibonacciNumber5 (n);
-//       meter.stop();
-//       times[run] = std::chrono::duration_cast <nanoseconds> (meter.peak()).count();
-//       meter.reset();
-//     }
-//     
-//     double min = (*std::min_element (times.begin(), times.end()));
-//     double max = (*std::max_element (times.begin(), times.end()));
-//     
-//     double mean = calcualteMean (times);
-//     double sd   = sqrt (calculateVar (times));
-//     
-//     // Time should be written out in [us] (= mircoseconds)
-//     min  /= 1000.0;
-//     max  /= 1000.0;
-//     mean /= 1000.0;
-//     sd   /= 1000.0;
-//     std::for_each (times.begin(), times.end(), [](double & x){ x /= 1000.0; });
-//     
-//     std::fprintf (ofile, "# %2u %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n",
-// 		  n, min, max, mean, sd, times[0], times[1], times[2], times[3], times[4], times[5]
-// 	 );
-//   }
-//   
-//   fclose (ofile);
-// }
-// 
-// TEST (measurements, time_algo6) {
-//   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo6-time";
-//   FILE * ofile = std::fopen (filename.c_str(), "w+");
-//   if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
-//   
-//   std::fprintf (ofile, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
-//   
-//   // Algorithm requires Look Up Table
-//   FibonacciLUT LUT;
-//   
-//   std::vector <double> times (6);
-//   Meter <timePoint, timeDuration> meter (myClock);
-//   for (uint n = 0; n <= 93; n++) {
-//     for (uint run = 0; run < 6; run++) {
-//       meter.start();
-//       getnFibonacciNumber6 (LUT, n);
-//       meter.stop();
-//       times[run] = std::chrono::duration_cast <nanoseconds> (meter.peak()).count();
-//       meter.reset();
-//     }
-//     
-//     double min = (*std::min_element (times.begin(), times.end()));
-//     double max = (*std::max_element (times.begin(), times.end()));
-//     
-//     double mean = calcualteMean (times);
-//     double sd   = sqrt (calculateVar (times));
-//     
-//     // Time should be written out in [us] (= mircoseconds)
-//     min  /= 1000.0;
-//     max  /= 1000.0;
-//     mean /= 1000.0;
-//     sd   /= 1000.0;
-//     std::for_each (times.begin(), times.end(), [](double & x){ x /= 1000.0; });
-//     
-//     std::fprintf (ofile, "# %2u %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n",
-// 		  n, min, max, mean, sd, times[0], times[1], times[2], times[3], times[4], times[5]
-// 	 );
-//   }
-//   
-//   fclose (ofile);
 // }
 
-// TEST (measurements, cycles_algo1) {
-//   std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo1-cycles";
-//   FILE * ofile = std::fopen (filename.c_str(), "w+");
-//   if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
-//   
-//   std::fprintf (ofile, "# %2s %15s %15s %15s %15s %15s\n", "n", "min [cyc]", "max [cyc]", "mean [cyc]", "sd [cyc]", "measurements [cyc]");
-//   
-//   std::vector <double> cylces (6);
-//   Meter <ulong, ulong> meter (myCycles);
-//   for (uint n = 0; n <= 45; n++) {
-//     for (uint run = 0; run < 6; run++) {
-//       std::printf ("%u\n", n);
-//       meter.start();
-//       getnFibonacciNumber (n);
-//       meter.stop();
-//       cylces[run] = meter.peak();
-//       meter.reset();
-//     }
-//     
-//     ulong min = (*std::min_element (cylces.begin(), cylces.end()));
-//     ulong max = (*std::max_element (cylces.begin(), cylces.end()));
-//     
-//     double mean = calcualteMean (cylces);
-//     double sd   = sqrt (calculateVar (cylces));
-//     
-//     
-//     std::fprintf (ofile, "# %2u %15lu %15lu %15.3f %15.3f %15.0f %15.0f %15.0f %15.0f %15.0f %15.0f\n",
-// 		  n, min, max, mean, sd, cylces[0], cylces[1], cylces[2], cylces[3], cylces[4], cylces[5]
-// 	 );
-//   }
-//   
-//   fclose (ofile);
-// }
-
-TEST (measurements, cycles_algo2) {
-  std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo2-cycles";
-  FILE * ofile = std::fopen (filename.c_str(), "w+");
-  if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+TEST (benchmark, algo2) {
   
-  std::fprintf (ofile, "# %2s %15s %15s %15s %15s %15s\n", "n", "min [cyc]", "max [cyc]", "mean [cyc]", "sd [cyc]", "measurements [cyc]");
+  // implementation to benchmark
   
-  std::vector <double> cylces (6);
-  Meter <ulong, ulong> meter (myCycles);
-  for (uint n = 0; n <= 93; n++) {
-    for (uint run = 0; run < 6; run++) {
-      meter.start();
-      getnFibonacciNumber2 (n);
-      meter.stop();
-      cylces[run] = meter.peak();
-      meter.reset();
+  std::function <ulong (uint)> implementation = getnFibonacciNumber2;
+  
+  // format the output 
+  // TODO: realize output stuff with streams!
+  
+  std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo2-time";
+  std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo2-cycles";
+  
+  char temp [256];
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+  std::string header (temp);
+  
+  // configure benchmark
+  
+  uint nruns = 10;
+  std::vector <uint> algorithmParameter (94);
+  // fill vector with the numbers from 0 to 93
+  std::iota (algorithmParameter.begin(), algorithmParameter.end(), 0);
+  
+  // store measurements
+  
+  Matrix <timeDuration> timeDurationMeasurements (algorithmParameter.size(), nruns, timeDuration());
+  Matrix <ulong> cycleMeasurements (algorithmParameter.size(), nruns, 0);
+  
+  // run benchmark
+  
+  // time
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &timeDurationMeasurements] (uint param)
+    {
+      timeDurationMeasurements.setRow (param
+				     , benchmark <timeDuration, timePoint, ulong, uint> (myClock, nruns, implementation, param));
     }
-    
-    ulong min = (*std::min_element (cylces.begin(), cylces.end()));
-    ulong max = (*std::max_element (cylces.begin(), cylces.end()));
-    
-    double mean = calcualteMean (cylces);
-    double sd   = sqrt (calculateVar (cylces));
-    
-    
-    std::fprintf (ofile, "# %2u %15lu %15lu %15.3f %15.3f %15.0f %15.0f %15.0f %15.0f %15.0f %15.0f\n",
-		  n, min, max, mean, sd, cylces[0], cylces[1], cylces[2], cylces[3], cylces[4], cylces[5]
-	 );
+  );
+  
+  // cycles
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &cycleMeasurements] (uint param)
+    {
+      cycleMeasurements.setRow (param
+			      , benchmark <ulong, ulong, ulong, uint> (myCycles, nruns, implementation, param));
+    }
+  );
+
+  // cast from the measurering unit into something printable and write measurements to file
+  // TODO: could be done with an toString() like structure
+  
+  // time
+  Matrix <double> measurements (timeDurationMeasurements.rows(), timeDurationMeasurements.cols(), 0.0);
+  for (uint i = 0; i < timeDurationMeasurements.rows(); i++) for (uint j = 0; j < timeDurationMeasurements.cols(); j++) {
+    measurements(i,j) = double (std::chrono::duration_cast <nanoseconds> (timeDurationMeasurements(i,j)).count());
+    measurements(i,j) /= 1000.0;
   }
   
-  fclose (ofile);
+  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  
+  // cycles
+  
+  for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
+    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+  
+  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  
 }
 
-TEST (measurements, cycles_algo3) {
-  std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo3-cycles";
-  FILE * ofile = std::fopen (filename.c_str(), "w+");
-  if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+TEST (benchmark, algo3) {
   
-  std::fprintf (ofile, "# %2s %15s %15s %15s %15s %15s\n", "n", "min [cyc]", "max [cyc]", "mean [cyc]", "sd [cyc]", "measurements [cyc]");
+  // implementation to benchmark
   
-  std::vector <double> cylces (6);
-  Meter <ulong, ulong> meter (myCycles);
-  for (uint n = 0; n <= 93; n++) {
-    for (uint run = 0; run < 6; run++) {
-      meter.start();
-      getnFibonacciNumber3 (n);
-      meter.stop();
-      cylces[run] = meter.peak();
-      meter.reset();
+  std::function <ulong (uint)> implementation = getnFibonacciNumber3;
+  
+  // format the output 
+  // TODO: realize output stuff with streams!
+  
+  std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo3-time";
+  std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo3-cycles";
+  
+  char temp [256];
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+  std::string header (temp);
+  
+  // configure benchmark
+  
+  uint nruns = 10;
+  std::vector <uint> algorithmParameter (94);
+  // fill vector with the numbers from 0 to 93
+  std::iota (algorithmParameter.begin(), algorithmParameter.end(), 0);
+  
+  // store measurements
+  
+  Matrix <timeDuration> timeDurationMeasurements (algorithmParameter.size(), nruns, timeDuration());
+  Matrix <ulong> cycleMeasurements (algorithmParameter.size(), nruns, 0);
+  
+  // run benchmark
+  
+  // time
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &timeDurationMeasurements] (uint param)
+    {
+      timeDurationMeasurements.setRow (param
+				     , benchmark <timeDuration, timePoint, ulong, uint> (myClock, nruns, implementation, param));
     }
-    
-    ulong min = (*std::min_element (cylces.begin(), cylces.end()));
-    ulong max = (*std::max_element (cylces.begin(), cylces.end()));
-    
-    double mean = calcualteMean (cylces);
-    double sd   = sqrt (calculateVar (cylces));
-    
-    
-    std::fprintf (ofile, "# %2u %15lu %15lu %15.3f %15.3f %15.0f %15.0f %15.0f %15.0f %15.0f %15.0f\n",
-		  n, min, max, mean, sd, cylces[0], cylces[1], cylces[2], cylces[3], cylces[4], cylces[5]
-	 );
+  );
+  
+  // cycles
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &cycleMeasurements] (uint param)
+    {
+      cycleMeasurements.setRow (param
+			      , benchmark <ulong, ulong, ulong, uint> (myCycles, nruns, implementation, param));
+    }
+  );
+
+  // cast from the measurering unit into something printable and write measurements to file
+  // TODO: could be done with an toString() like structure
+  
+  // time
+  Matrix <double> measurements (timeDurationMeasurements.rows(), timeDurationMeasurements.cols(), 0.0);
+  for (uint i = 0; i < timeDurationMeasurements.rows(); i++) for (uint j = 0; j < timeDurationMeasurements.cols(); j++) {
+    measurements(i,j) = double (std::chrono::duration_cast <nanoseconds> (timeDurationMeasurements(i,j)).count());
+    measurements(i,j) /= 1000.0;
   }
   
-  fclose (ofile);
+  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  
+  // cycles
+  
+  for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
+    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+  
+  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  
 }
 
-TEST (measurements, cycles_algo4) {
-  std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo4-cycles";
-  FILE * ofile = std::fopen (filename.c_str(), "w+");
-  if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+TEST (benchmark, algo4) {
   
-  std::fprintf (ofile, "# %2s %15s %15s %15s %15s %15s\n", "n", "min [cyc]", "max [cyc]", "mean [cyc]", "sd [cyc]", "measurements [cyc]");
+  // implementation to benchmark
   
-  std::vector <double> cylces (6);
-  Meter <ulong, ulong> meter (myCycles);
-  for (uint n = 0; n <= 93; n++) {
-    for (uint run = 0; run < 6; run++) {
-      meter.start();
-      getnFibonacciNumber4 (n);
-      meter.stop();
-      cylces[run] = meter.peak();
-      meter.reset();
+  std::function <ulong (uint)> implementation = getnFibonacciNumber4;
+  
+  // format the output 
+  // TODO: realize output stuff with streams!
+  
+  std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo4-time";
+  std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo4-cycles";
+  
+  char temp [256];
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+  std::string header (temp);
+  
+  // configure benchmark
+  
+  uint nruns = 10;
+  std::vector <uint> algorithmParameter (94);
+  // fill vector with the numbers from 0 to 93
+  std::iota (algorithmParameter.begin(), algorithmParameter.end(), 0);
+  
+  // store measurements
+  
+  Matrix <timeDuration> timeDurationMeasurements (algorithmParameter.size(), nruns, timeDuration());
+  Matrix <ulong> cycleMeasurements (algorithmParameter.size(), nruns, 0);
+  
+  // run benchmark
+  
+  // time
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &timeDurationMeasurements] (uint param)
+    {
+      timeDurationMeasurements.setRow (param
+				     , benchmark <timeDuration, timePoint, ulong, uint> (myClock, nruns, implementation, param));
     }
-    
-    ulong min = (*std::min_element (cylces.begin(), cylces.end()));
-    ulong max = (*std::max_element (cylces.begin(), cylces.end()));
-    
-    double mean = calcualteMean (cylces);
-    double sd   = sqrt (calculateVar (cylces));
-    
-    
-    std::fprintf (ofile, "# %2u %15lu %15lu %15.3f %15.3f %15.0f %15.0f %15.0f %15.0f %15.0f %15.0f\n",
-		  n, min, max, mean, sd, cylces[0], cylces[1], cylces[2], cylces[3], cylces[4], cylces[5]
-	 );
+  );
+  
+  // cycles
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &cycleMeasurements] (uint param)
+    {
+      cycleMeasurements.setRow (param
+			      , benchmark <ulong, ulong, ulong, uint> (myCycles, nruns, implementation, param));
+    }
+  );
+
+  // cast from the measurering unit into something printable and write measurements to file
+  // TODO: could be done with an toString() like structure
+  
+  // time
+  Matrix <double> measurements (timeDurationMeasurements.rows(), timeDurationMeasurements.cols(), 0.0);
+  for (uint i = 0; i < timeDurationMeasurements.rows(); i++) for (uint j = 0; j < timeDurationMeasurements.cols(); j++) {
+    measurements(i,j) = double (std::chrono::duration_cast <nanoseconds> (timeDurationMeasurements(i,j)).count());
+    measurements(i,j) /= 1000.0;
   }
   
-  fclose (ofile);
+  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  
+  // cycles
+  
+  for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
+    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+  
+  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  
 }
 
-TEST (measurements, cycles_algo5) {
-  std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo5-cycles";
-  FILE * ofile = std::fopen (filename.c_str(), "w+");
-  if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+TEST (benchmark, algo5) {
   
-  std::fprintf (ofile, "# %2s %15s %15s %15s %15s %15s\n", "n", "min [cyc]", "max [cyc]", "mean [cyc]", "sd [cyc]", "measurements [cyc]");
+  // implementation to benchmark
   
-  std::vector <double> cylces (6);
-  Meter <ulong, ulong> meter (myCycles);
-  for (uint n = 0; n <= 75; n++) {
-    for (uint run = 0; run < 6; run++) {
-      meter.start();
-      getnFibonacciNumber5 (n);
-      meter.stop();
-      cylces[run] = meter.peak();
-      meter.reset();
+  std::function <ulong (uint)> implementation = getnFibonacciNumber5;
+  
+  // format the output 
+  // TODO: realize output stuff with streams!
+  
+  std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo5-time";
+  std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo5-cycles";
+  
+  char temp [256];
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+  std::string header (temp);
+  
+  // configure benchmark
+  
+  uint nruns = 10;
+  std::vector <uint> algorithmParameter (76);
+  // fill vector with the numbers from 0 to 75
+  std::iota (algorithmParameter.begin(), algorithmParameter.end(), 0);
+  
+  // store measurements
+  
+  Matrix <timeDuration> timeDurationMeasurements (algorithmParameter.size(), nruns, timeDuration());
+  Matrix <ulong> cycleMeasurements (algorithmParameter.size(), nruns, 0);
+  
+  // run benchmark
+  
+  // time
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &timeDurationMeasurements] (uint param)
+    {
+      timeDurationMeasurements.setRow (param
+				     , benchmark <timeDuration, timePoint, ulong, uint> (myClock, nruns, implementation, param));
     }
-    
-    ulong min = (*std::min_element (cylces.begin(), cylces.end()));
-    ulong max = (*std::max_element (cylces.begin(), cylces.end()));
-    
-    double mean = calcualteMean (cylces);
-    double sd   = sqrt (calculateVar (cylces));
-    
-    
-    std::fprintf (ofile, "# %2u %15lu %15lu %15.3f %15.3f %15.0f %15.0f %15.0f %15.0f %15.0f %15.0f\n",
-		  n, min, max, mean, sd, cylces[0], cylces[1], cylces[2], cylces[3], cylces[4], cylces[5]
-	 );
+  );
+  
+  // cycles
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &cycleMeasurements] (uint param)
+    {
+      cycleMeasurements.setRow (param
+			      , benchmark <ulong, ulong, ulong, uint> (myCycles, nruns, implementation, param));
+    }
+  );
+
+  // cast from the measurering unit into something printable and write measurements to file
+  // TODO: could be done with an toString() like structure
+  
+  // time
+  Matrix <double> measurements (timeDurationMeasurements.rows(), timeDurationMeasurements.cols(), 0.0);
+  for (uint i = 0; i < timeDurationMeasurements.rows(); i++) for (uint j = 0; j < timeDurationMeasurements.cols(); j++) {
+    measurements(i,j) = double (std::chrono::duration_cast <nanoseconds> (timeDurationMeasurements(i,j)).count());
+    measurements(i,j) /= 1000.0;
   }
   
-  fclose (ofile);
+  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  
+  // cycles
+  
+  for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
+    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+  
+  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  
 }
 
-TEST (measurements, cycles_algo6) {
-  std::string filename = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo6-cycles";
-  FILE * ofile = std::fopen (filename.c_str(), "w+");
-  if (!ofile) throw std::runtime_error ("Error: Cannot open output file.");
+TEST (benchmark, algo6) {
   
-  std::fprintf (ofile, "# %2s %15s %15s %15s %15s %15s\n", "n", "min [cyc]", "max [cyc]", "mean [cyc]", "sd [cyc]", "measurements [cyc]");
+  // implementation to benchmark
   
-  FibonacciLUT LUT;
+  std::function <ulong (FibonacciLUT, uint)> implementation = getnFibonacciNumber6;
   
-  std::vector <double> cylces (6);
-  Meter <ulong, ulong> meter (myCycles);
-  for (uint n = 0; n <= 93; n++) {
-    for (uint run = 0; run < 6; run++) {
-      meter.start();
-      getnFibonacciNumber6 (LUT, n);
-      meter.stop();
-      cylces[run] = meter.peak();
-      meter.reset();
+  // format the output 
+  // TODO: realize output stuff with streams!
+  
+  std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo6-time";
+  std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo6-cycles";
+  
+  char temp [256];
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+  std::string header (temp);
+  
+  // configure benchmark
+  
+  uint nruns = 10;
+  std::vector <uint> algorithmParameter (94);
+  // fill vector with the numbers from 0 to 93
+  std::iota (algorithmParameter.begin(), algorithmParameter.end(), 0);
+  
+  FibonacciLUT LUT = FibonacciLUT();
+  
+  // store measurements
+  
+  Matrix <timeDuration> timeDurationMeasurements (algorithmParameter.size(), nruns, timeDuration());
+  Matrix <ulong> cycleMeasurements (algorithmParameter.size(), nruns, 0);
+  
+  // run benchmark
+  
+  // time
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &timeDurationMeasurements, LUT] (uint param)
+    {
+      timeDurationMeasurements.setRow (param
+				     , benchmark <timeDuration, timePoint, ulong, FibonacciLUT ,uint> (myClock, nruns, implementation, LUT, param));
     }
-    
-    ulong min = (*std::min_element (cylces.begin(), cylces.end()));
-    ulong max = (*std::max_element (cylces.begin(), cylces.end()));
-    
-    double mean = calcualteMean (cylces);
-    double sd   = sqrt (calculateVar (cylces));
-    
-    
-    std::fprintf (ofile, "# %2u %15lu %15lu %15.3f %15.3f %15.0f %15.0f %15.0f %15.0f %15.0f %15.0f\n",
-		  n, min, max, mean, sd, cylces[0], cylces[1], cylces[2], cylces[3], cylces[4], cylces[5]
-	 );
+  );
+  
+  // cycles
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &cycleMeasurements, LUT] (uint param)
+    {
+      cycleMeasurements.setRow (param
+			      , benchmark <ulong, ulong, ulong, FibonacciLUT, uint> (myCycles, nruns, implementation, LUT, param));
+    }
+  );
+
+  // cast from the measurering unit into something printable and write measurements to file
+  // TODO: could be done with an toString() like structure
+  
+  // time
+  Matrix <double> measurements (timeDurationMeasurements.rows(), timeDurationMeasurements.cols(), 0.0);
+  for (uint i = 0; i < timeDurationMeasurements.rows(); i++) for (uint j = 0; j < timeDurationMeasurements.cols(); j++) {
+    measurements(i,j) = double (std::chrono::duration_cast <nanoseconds> (timeDurationMeasurements(i,j)).count());
+    measurements(i,j) /= 1000.0;
   }
   
-  fclose (ofile);
+  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  
+  // cycles
+  
+  for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
+    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+  
+  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  
+}
+
+TEST (benchmark, algo7) {
+  
+  // implementation to benchmark
+  
+  std::function <ulong (uint)> implementation = getnFibonacciNumber7;
+  
+  // format the output 
+  // TODO: realize output stuff with streams!
+  
+  std::string filename_time = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo7-time";
+  std::string filename_cycles = "/home/bach/Documents/algorithm-exercises/exercises/measurements/algo7-cycles";
+  
+  char temp [256];
+  std::sprintf (temp, "# %2s %10s %10s %10s %10s %15s\n", "n", "min [us]", "max [us]", "mean [us]", "sd [us]", "measurements [us]");
+  std::string header (temp);
+  
+  // configure benchmark
+  
+  uint nruns = 10;
+  std::vector <uint> algorithmParameter (94);
+  // fill vector with the numbers from 0 to 93
+  std::iota (algorithmParameter.begin(), algorithmParameter.end(), 0);
+  
+  // store measurements
+  
+  Matrix <timeDuration> timeDurationMeasurements (algorithmParameter.size(), nruns, timeDuration());
+  Matrix <ulong> cycleMeasurements (algorithmParameter.size(), nruns, 0);
+  
+  // run benchmark
+  
+  // time
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &timeDurationMeasurements] (uint param)
+    {
+      timeDurationMeasurements.setRow (param
+				     , benchmark <timeDuration, timePoint, ulong, uint> (myClock, nruns, implementation, param));
+    }
+  );
+  
+  // cycles
+  std::for_each (algorithmParameter.begin(), algorithmParameter.end()
+    , [implementation, nruns, &cycleMeasurements] (uint param)
+    {
+      cycleMeasurements.setRow (param
+			      , benchmark <ulong, ulong, ulong, uint> (myCycles, nruns, implementation, param));
+    }
+  );
+
+  // cast from the measurering unit into something printable and write measurements to file
+  // TODO: could be done with an toString() like structure
+  
+  // time
+  Matrix <double> measurements (timeDurationMeasurements.rows(), timeDurationMeasurements.cols(), 0.0);
+  for (uint i = 0; i < timeDurationMeasurements.rows(); i++) for (uint j = 0; j < timeDurationMeasurements.cols(); j++) {
+    measurements(i,j) = double (std::chrono::duration_cast <nanoseconds> (timeDurationMeasurements(i,j)).count());
+    measurements(i,j) /= 1000.0;
+  }
+  
+  writeMeasurements <double> (filename_time, header, algorithmParameter, measurements);
+  
+  // cycles
+  
+  for (uint i = 0; i < cycleMeasurements.rows(); i++) for (uint j = 0; j < cycleMeasurements.cols(); j++) 
+    measurements(i,j) = double (cycleMeasurements(i,j)) / 1000.0;
+  
+  writeMeasurements <double> (filename_cycles, header, algorithmParameter, measurements);
+  
 }
 
 int main (int argc, char* argv[]) {

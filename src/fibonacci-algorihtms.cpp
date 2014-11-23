@@ -82,6 +82,26 @@ Matrix <ulong> exponentiationBySquaring (Matrix <ulong> x, uint n) {
   else 			return (x * exponentiationBySquaring (x * x, (n - 1) / 2));
 }
 
+Matrix <ulong> exponentiationBySquaring_iterativ (Matrix <ulong> x, uint n) {
+  if (n == 0) 		return (Matrix <ulong> (1, 1, {1}));
+  if (n == 1) 		return (x);
+  
+  Matrix <ulong> orig = createIdentityMatrix <ulong> (x.rows());
+  
+  while (n > 1) {			// recursive descend
+    if (n % 2 == 0) {
+      x = x * x;
+      n = n / 2;
+    } else {
+      orig = orig * x;
+      x = x * x;
+      n = (n - 1) / 2;
+    }
+  }
+  
+  return orig * x;
+}
+
 // Implementation; see header-file for description
 ulong getnFibonacciNumber5 (uint n) {
   if (n < 2) return n;
@@ -96,6 +116,17 @@ double exponentiationBySquaring (double x, uint n) {
   else 			return (x * exponentiationBySquaring (x * x, (n - 1) / 2));
 }
 
-ulong getnFibonacciNumber6 (const FibonacciLUT& LUT, uint n) {
+ulong getnFibonacciNumber6 (const FibonacciLUT & LUT, uint n) {
   return LUT.lookfor(n);
+}
+
+ulong getnFibonacciNumber7 (uint n) {
+  if (n < 2) return n;
+  
+  Matrix <ulong> v (2, 1, {0, 1});
+  Matrix <ulong> m (2, 2, {0, 1, 1, 1}); 
+  
+  Matrix <ulong> res = exponentiationBySquaring_iterativ (m, n) * v;
+  
+  return res (0, 0);
 }

@@ -65,4 +65,12 @@ double exponentiationBySquaring (double x, uint n);
 // The LUT needs to be initialized beforehand.
 ulong getnFibonacciNumber6 (const FibonacciLUT& LUT, uint n);
 
+// Function which realizes the exponentiation by squaring for Matrix <ulong> in an itterative manner
+Matrix <ulong> exponentiationBySquaring_iterativ (Matrix <ulong> x, uint n);
+
+// Function to calculate the n-th Fibonacci
+//
+// This function uses an iterative implementation of the exponentiation by squaring algorithm.
+ulong getnFibonacciNumber7 (uint n);
+
 #endif
